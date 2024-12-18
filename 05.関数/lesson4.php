@@ -24,34 +24,38 @@ $product = 150; // 商品金額
 function calc($yen, $product)
 {
     // この関数内に処理を記述
-    $i = $yen - $product;
-    $tenThousand = floor($i / 10000);
-    $fiveThousand = floor($i / 5000);
-    $oneThousand = floor(($i - (5000 * $fiveThousand)) / 1000);
-    $fivehundred = floor(($i - (5000 * $fiveThousand) - (1000 * $oneThousand)) / 500);
-    $onehundred = floor(($i - (5000 * $fiveThousand) - (1000 * $oneThousand) - (500 * $fivehundred)) / 100);
-    $fifty = floor(($i - (5000 * $fiveThousand) - (1000 * $oneThousand) - (500 * $fivehundred) - (100 * $onehundred)) / 50);
-    $ten = floor(($i - (5000 * $fiveThousand) - (1000 * $oneThousand) - (500 * $fivehundred) - (100 * $onehundred) - (50 * $fifty)) / 10);
-    $five = floor(($i - (5000 * $fiveThousand) - (1000 * $oneThousand) - (500 * $fivehundred) - (100 * $onehundred) - (50 * $fifty) - (10 * $ten)) / 5);
-    $one = floor(($i - (5000 * $fiveThousand) - (1000 * $oneThousand) - (500 * $fivehundred) - (100 * $onehundred) - (50 * $fifty) - (10 * $ten) - (5 * $five)) / 1);
+    $print = "";
+    $money = [10000,5000,1000,500,100,50,10,5,1];
+    $change = $yen - $product;
 
-    if ($yen >= $product) {
-        echo "10000円札×".$tenThousand."枚、";
-        echo "5000円札×".$fiveThousand."枚、";
-        echo "1000円札×".$oneThousand."枚、";
-        echo "500円玉×".$fivehundred."枚、";
-        echo "100円玉×".$onehundred."枚、";
-        echo "50円玉×".$fifty."枚、";
-        echo "10円玉×".$ten."枚、";
-        echo "5円玉×".$five."枚、";
-        echo "1円玉×".$one."枚";
+    if ($yen >= 1000) {
+        $print = $yen."円札で購入した場合、"."<br>";
+    } else {
+        $print = $yen."円玉で購入した場合、"."<br>";
+    };
 
-    } elseif ($yen < $product) {
-        echo abs($i)."円足りません。";
-    }
-}
+    if ($yen < $product) {
+        echo abs($change)."円足りません。";
+    } else {
+        for ($num = 0; $num < count($money); $num++) {
+            if (floor($change / $money[$num]) >= 1) {
+                $print .= $money[$num]."円札x".floor($change / $money[$num])."枚";
+                $change %= $money[$num];
+            } else {
+                $print .= $money[$num]."円札x0枚";
+            };
+            if ($num < (count($money) - 1)) {
+                $print .= "、";
+            } else {
+                $print .= "。";
+            };
+        };
+    };
+    echo $print;
+};
 
 ?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -61,7 +65,8 @@ function calc($yen, $product)
 <body>
     <section>
         <!-- ここに結果表示 -->
-        <?php echo calc($yen, $product); ?>
+        <?php
+        echo calc($yen, $product);?>
     </section>
 </body>
 </html>
